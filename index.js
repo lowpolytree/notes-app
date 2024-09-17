@@ -1,5 +1,8 @@
 const express = require("express");
 const fs = require("fs");
+const Logger = require('./logger/logger');
+
+const logger = new Logger('logs.json', 1024 * 1024);
 
 function loadNotes(){
 
