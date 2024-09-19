@@ -58,6 +58,7 @@ app.use(express.json());
 
 ensureNotesFile('notes.json');
 
+// GET all notes
 app.get('/notes', (req, res) => {
     readNotesFile()
       .then((notes) => {
@@ -69,13 +70,28 @@ app.get('/notes', (req, res) => {
         res.status(500).send(error);
     });
   });
+
+ // GET and list all notes in the format: id -- title
+app.get('/notes/list', (req, res) => {
+    readNotesFile()
+      .then((notes) => {
+        // Map over the notes and format them as "id -- title"
+        const formattedNotes = notes.map(note => `${note.id} -- ${note.title}`);
+        
+        logger.info("Formatted notes list fetched successfully");
+        res.json(formattedNotes); // Send the formatted list as the response
+      })
+      .catch((error) => {
+        logger.error(`Error fetching formatted notes list: ${error}`);
+        res.status(500).send(error);
+      });
+  });
   
-//app.get a specific item by filter
 app.post('/notes', (req, res) => {
     readNotesFile()
     .then((notes) => {
       const newNote = {
-        id: notes.length + 1, // Simple ID generation
+        id: notes.length + 1, 
         title: req.body.title,
         content: req.body.content,
       };
@@ -97,6 +113,7 @@ app.post('/notes', (req, res) => {
     });
 });
 
+// Updates a note by ID
 app.put('/notes/:id', (req, res) => {
     readNotesFile()
       .then((notes) => {
