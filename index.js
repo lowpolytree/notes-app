@@ -1,5 +1,3 @@
-//fetch notes contents by either title or id
-//del all notes
 
 const express = require("express");
 const fs = require("fs");
@@ -206,6 +204,21 @@ function reassignNoteIDs(notes) {
     };
   });
 }
+
+// Route to delete all notes
+// Route to delete all notes (reset notes.json to [])
+app.delete('/notes', (req, res) => {
+    // Write an empty array to notes.json
+    writeNotesFile([])
+      .then(() => {
+        logger.info('All notes deleted, notes.json reset to an empty array');
+        res.sendStatus(204); // No content
+      })
+      .catch((error) => {
+        logger.error(`Error resetting notes: ${error}`);
+        res.status(500).send("Error resetting notes");
+      });
+  });
 
 // Route to delete a note by ID
 app.delete("/notes/:id", (req, res) => {
