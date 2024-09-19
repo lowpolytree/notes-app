@@ -1,0 +1,4 @@
+{
+    "ignore": ["logger/*", "node_modules/", "notes.json"]
+  }
+  

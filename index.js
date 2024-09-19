@@ -1,7 +1,6 @@
 //list all notes: id - title
 //fetch notes contents by either title or id
 //del all notes or del by id or title
-//when del a note reassign IDs
 //create notes.json if doesnt exist
 
 const express = require("express");
@@ -36,10 +35,28 @@ function writeNotesFile(notes) {
     });
   }
 
+  // Function to ensure notes.json exists and is valid
+function ensureNotesFile(filePath) {
+    if (!fs.existsSync(filePath)) {
+      // If the file doesn't exist, create it with an empty array
+      fs.writeFileSync(filePath, '[]', 'utf8');
+      logger.info(`Created ${filePath} with an empty array.`);
+    } else {
+      // If the file exists but is empty or invalid, reset it to an empty array
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      if (!fileContent || fileContent.trim() === '') {
+        fs.writeFileSync(filePath, '[]', 'utf8');
+        logger.info(`Reset ${filePath} to an empty array.`);
+      }
+    }
+  }
+
 // Set up express server
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+
+ensureNotesFile('notes.json');
 
 app.get('/notes', (req, res) => {
     readNotesFile()
@@ -109,6 +126,15 @@ app.put('/notes/:id', (req, res) => {
         res.status(500).send(error);
       });
   });
+
+function reassignNoteIDs(notes) {
+    return notes.map((note, index) => {
+      return {
+        ...note,
+        id: index + 1 // Reassign IDs starting from 1
+      };
+    });
+  }
   
   app.delete('/notes/:id', (req, res) => {
     readNotesFile()
@@ -120,10 +146,12 @@ app.put('/notes/:id', (req, res) => {
           logger.warn(`Note with ID ${noteId} not found for deletion`);
           return res.status(404).send("Note not found");
         }
+
+        const filteredNotesWithNewID = reassignNoteIDs(filteredNotes);
   
-        writeNotesFile(filteredNotes)
+        writeNotesFile(filteredNotesWithNewID)
           .then(() => {
-            logger.info(`Note with ID ${noteId} deleted`);
+            logger.info(`Note with ID ${noteId} deleted and IDs reassigned`);
             res.sendStatus(204); // No content
           })
           .catch((error) => {
