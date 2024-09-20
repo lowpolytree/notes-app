@@ -15,56 +15,55 @@ A simple RESTful Notes API built with Express.js and Node.js. This application a
 ## API Endpoints
 
 ### 1. Get All Notes
-GET /notes
-Fetches all notes stored in `notes.json`.
+`GET /notes`
 
 ### 2. Get a Note by ID
-GET /notes/:id
+`GET /notes/:id`
 
 Example request:
-GET /notes/1
+`GET /notes/1`
 
 ### 3. Get Notes by Title
-GET /notes/title/:title
+`GET /notes/title/:title`
 
 Example request:
-GET /notes/title/MyTitle
+`GET /notes/title/MyTitle`
 
 ### 4. List All Notes in `id -- title` Format
-GET /notes/list
+`GET /notes/list`
 
 Example response:
-[
+`[
   "1 -- First Note",
   "2 -- Second Note"
-]
+]`
 
 ### 5. Add a New Note
-POST /notes
+`POST /notes`
 
 Request Body (JSON):
-{
+`{
   "title": "New Note Title",
   "content": "Content of the new note"
-}
+}`
 
 ### 6. Update a Note by ID
-PUT /notes/:id
+`PUT /notes/:id`
 
 Request Body (JSON):
-{
+`{
   "title": "Updated Title",
   "content": "Updated Content"
-}
+}`
 
 ### 7. Delete a Note by ID
-DELETE /notes/:id
+`DELETE /notes/:id`
 
 Example request:
-DELETE /notes/1
+`DELETE /notes/1`
 
 ### 8. Delete All Notes (Reset `notes.json`)
-DELETE /notes
+`DELETE /notes`
 
 ## License
 This project is licensed under the ISC License.
